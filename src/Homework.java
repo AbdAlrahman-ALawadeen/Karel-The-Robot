@@ -5,10 +5,10 @@ public class Homework extends SuperKarel {
 
     private int cnt = 0;
     @Override
-    public void run() {
+    public void run(){
         setBeepersInBag(1000);
-        int width = Count();
-        int height = Count();
+        int width = Distance();
+        int height = Distance();
         if((height == 1 && (width == 1 || width == 2)) || (width == 1 && height == 2)){
             if(height == 2){
                 turnLeft();
@@ -69,7 +69,7 @@ public class Homework extends SuperKarel {
             }
         }
     }
-    public int Count(){
+    public int Distance(){
         int count = 1;
         while(true){
             if(frontIsBlocked()){
@@ -157,20 +157,15 @@ public class Homework extends SuperKarel {
             }
         }
         else{
+            ZigZagHeight(width, true, 1);
             if(width == 6){
-                ZigZagHeight(6, true, 1);
                 TopDown();
                 DownTop();
             }
             else if(width == 5){
-                ZigZagHeight(5, true, 1);
                 TopDown();
             }
-            else if(width == 4){
-                ZigZagHeight(4, true, 1);
-            }
-            else{
-                ZigZagHeight(3, true, 1);
+            else if(width == 3){
                 MoveAndCount();
             }
         }
@@ -209,13 +204,12 @@ public class Homework extends SuperKarel {
                     }
                     else{
                         if(!toggle){
-                            toggle = true;
                             RightToLeft();
                         }
                         else{
-                            toggle = false;
                             LeftToRight();
                         }
+                        toggle = !toggle;
                     }
                     if(full < 4){
                         counter = 0;
@@ -224,20 +218,15 @@ public class Homework extends SuperKarel {
             }
         }
         else{
+            ZigZagHeight(height, false, 2);
             if(height == 6){
-                ZigZagHeight(6, false, 2);
                 RightToLeft();
                 LeftToRight();
             }
             else if(height == 5){
-                ZigZagHeight(5, false, 2);
                 RightToLeft();
             }
-            else if(height == 4){
-                ZigZagHeight(4, false, 2);
-            }
-            else{
-                ZigZagHeight(3, false, 2);
+            else if(height == 3){
                 MoveAndCount();
             }
         }
@@ -289,15 +278,15 @@ public class Homework extends SuperKarel {
         }
         return cnt;
     }
-    public void ZigZagHeight(int width, boolean flag, int axis){
+    public void ZigZagHeight(int distance, boolean flag, int axis){
         boolean toggle = flag;
-        int cnt = init(width, axis);
+        int cnt = init(distance, axis);
         for(int i = 0; i < cnt; i++){
             if(!toggle){
                 toggle = true;
                 turnLeft();
                 CheckAndPut();
-                if((width > 4) || i != cnt - 1){
+                if((distance > 4) || i != cnt - 1){
                     MoveAndCount();
                     turnRight();
                     MoveAndCount();
@@ -307,7 +296,7 @@ public class Homework extends SuperKarel {
                 toggle = false;
                 turnRight();
                 CheckAndPut();
-                if(i != cnt - 1 || width > 4){
+                if(i != cnt - 1 || distance > 4){
                     MoveAndCount();
                     turnLeft();
                     MoveAndCount();
