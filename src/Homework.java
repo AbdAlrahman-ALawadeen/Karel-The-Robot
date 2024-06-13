@@ -23,10 +23,10 @@ public class Homework extends SuperKarel {
             diagonal();
         }
         else if(height == 2 || height == 1){
-            HEIGHT(height, width);
+            HEIGHT1or2(height, width);
         }
         else if(width == 1 || width == 2){
-            WIDTH(height, width);
+            WIDTH1or2(height, width);
         }
         else if(height == width && height % 2 == 0){
             diagonal();
@@ -109,7 +109,7 @@ public class Homework extends SuperKarel {
         StraightForward();
         turnLeft();
     }
-    public void HEIGHT(int height, int width){
+    public void HEIGHT1or2(int height, int width){
         if(width > 6 || (height == 1)){
             int temp = (width - 3) / 4;
             if(height == 1 && width <= 6){
@@ -175,7 +175,7 @@ public class Homework extends SuperKarel {
             }
         }
     }
-    public void WIDTH(int height, int width){
+    public void WIDTH1or2(int height, int width){
         if(height > 6 || (width == 1)){
             int temp = (height - 3) / 4;
             int full = 0;
