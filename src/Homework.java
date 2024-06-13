@@ -17,7 +17,7 @@ public class Homework extends SuperKarel {
             else if(width == 2){
                 move();
             }
-            System.out.println("Can not chambers");
+            System.out.println("Can not Divided");
         }
         else if(height == 2 && width == 2){
             diagonal();
