@@ -1,8 +1,5 @@
 import stanford.karel.SuperKarel;
-
-
 public class Homework extends SuperKarel {
-
     private int cnt = 0;
     @Override
     public void run(){
@@ -23,10 +20,10 @@ public class Homework extends SuperKarel {
             diagonal();
         }
         else if(height == 2 || height == 1){
-            HEIGHT1or2(height, width);
+            HeightOrWidth(height, width, true);
         }
         else if(width == 1 || width == 2){
-            WIDTH1or2(height, width);
+            HeightOrWidth(height, width, false);
         }
         else if(height == width && height % 2 == 0){
             diagonal();
@@ -109,161 +106,85 @@ public class Homework extends SuperKarel {
         StraightForward();
         turnLeft();
     }
-    public void HEIGHT1or2(int height, int width){
-        if(width > 6 || (height == 1)){
-            int temp = (width - 3) / 4;
-            if(height == 1 && width <= 6){
-                temp = 1;
-            }
-            int full = 0;
-            int counter = 0;
-            boolean toggle = false;
-            for(int i = 0; i < width; i++){
-                if(counter < temp){
-                    if(!frontIsBlocked()){
-                        MoveAndCount();
-                    }
-                    else{
-                        turnAround();
-                    }
-                    counter++;
+    public void HeightOrWidth(int height, int width, boolean isHeight) {
+        int primary = isHeight ? height : width;
+        int secondary = isHeight ? width : height;
+        int temp = (secondary - 3) / 4;
+        temp = (primary == 1 && secondary <= 6) ? 1 : temp;
+        if ((isHeight && secondary <= 6 && primary != 1)|| (!isHeight && secondary <= 6 && primary != 1)) {
+            ZigZagHeight(secondary, isHeight, isHeight ? 1 : 2);
+            if (secondary == 6) {
+                if (isHeight) {
+                    LeftToRightOrTopToDown(primary);
+                    RightToLeftOrDownToTop(secondary);
+                } else {
+                    RightToLeftOrDownToTop(width);
+                    LeftToRightOrTopToDown(height);
                 }
-                else{
-                    full++;
-                    if(height == 1){
-                        CheckAndPut();
-                        if(!frontIsBlocked()){
-                            MoveAndCount();
-                        }
-                        else{
-                            turnAround();
-                            break;
-                        }
-                    }
-                    else{
-                        if(!toggle){
-                            toggle = true;
-                            TopDown();
-                        }
-                        else{
-                            toggle = false;
-                            DownTop();
-                        }
-                    }
-                    if(full < 4){
-                        counter = 0;
-                    }
+            } else if (secondary == 5) {
+                if (isHeight) {
+                    LeftToRightOrTopToDown(primary);
+                } else {
+                    RightToLeftOrDownToTop(width);
                 }
-            }
-        }
-        else{
-            ZigZagHeight(width, true, 1);
-            if(width == 6){
-                TopDown();
-                DownTop();
-            }
-            else if(width == 5){
-                TopDown();
-            }
-            else if(width == 3){
+            } else if (secondary == 3) {
                 MoveAndCount();
             }
+            return;
         }
-    }
-    public void WIDTH1or2(int height, int width){
-        if(height > 6 || (width == 1)){
-            int temp = (height - 3) / 4;
-            int full = 0;
-            int counter = 0;
-            if(width == 1){
-                temp = 1;
-            }
-            boolean toggle = false;
+        int full = 0;
+        int counter = 0;
+        boolean toggle = false;
+        if (!isHeight) {
             turnLeft();
-            for(int i = 0; i < height; i++){
-                if(counter < temp){
-                    if(!frontIsBlocked()){
+        }
+
+        for (int i = 0; i < secondary; i++) {
+            if (counter < temp) {
+                if (!frontIsBlocked()) {
+                    MoveAndCount();
+                } else {
+                    turnAround();
+                }
+                counter++;
+            } else {
+                full++;
+                if (primary == 1) {
+                    CheckAndPut();
+                    if (!frontIsBlocked()) {
                         MoveAndCount();
-                    }
-                    else{
-                        turnAround();
-                    }
-                    counter++;
-                }
-                else{
-                    full++;
-                    if(width == 1){
-                        CheckAndPut();
-                        if(!frontIsBlocked()){
-                            MoveAndCount();
-                        }
-                        else{
+                    } else {
+                        if (isHeight) {
+                            turnAround();
+                        } else {
                             turnLeft();
-                            break;
                         }
+                        break;
                     }
-                    else{
-                        if(!toggle){
-                            RightToLeft();
+                } else {
+                    if (!toggle) {
+                        toggle = true;
+                        if (isHeight) {
+                            LeftToRightOrTopToDown(primary);
+                        } else {
+                            RightToLeftOrDownToTop(secondary);
                         }
-                        else{
-                            LeftToRight();
+                    } else {
+                        toggle = false;
+                        if (isHeight) {
+                            RightToLeftOrDownToTop(secondary);
+                        } else {
+                            LeftToRightOrTopToDown(primary);
                         }
-                        toggle = !toggle;
-                    }
-                    if(full < 4){
-                        counter = 0;
                     }
                 }
-            }
-        }
-        else{
-            ZigZagHeight(height, false, 2);
-            if(height == 6){
-                RightToLeft();
-                LeftToRight();
-            }
-            else if(height == 5){
-                RightToLeft();
-            }
-            else if(height == 3){
-                MoveAndCount();
+                counter = full < 4 ? 0 : counter;
             }
         }
     }
-    public void RightToLeft(){
-        turnRight();
-        CheckAndPut();
-        MoveAndCount();
-        turnLeft();
-        CheckAndPut();
-        if(frontIsBlocked()){
-            turnAround();
-        }
-        else{
-            MoveAndCount();
-        }
-    }
-    public void LeftToRight(){
-        turnLeft();
-        CheckAndPut();
-        MoveAndCount();
-        turnRight();
-        CheckAndPut();
-        if(frontIsBlocked()){
-            turnRight();
-            MoveAndCount();
-            turnAround();
-        }
-        else{
-            MoveAndCount();
-        }
-    }
-    public int init(int distance, int axis){
-        int cnt = 3;
-        if(distance < 4){
-            cnt = 2;
-        }
+    public void ZigZagHeight(int distance, boolean flag, int axis){
+        boolean toggle = flag;
+        int numberOfParts = distance < 4 ? 2 : 3;
         CheckAndPut();
         if(axis == 2){
             MoveAndCount();
@@ -276,17 +197,12 @@ public class Homework extends SuperKarel {
             turnRight();
             MoveAndCount();
         }
-        return cnt;
-    }
-    public void ZigZagHeight(int distance, boolean flag, int axis){
-        boolean toggle = flag;
-        int cnt = init(distance, axis);
-        for(int i = 0; i < cnt; i++){
+        for(int i = 0; i < numberOfParts; i++){
             if(!toggle){
                 toggle = true;
                 turnLeft();
                 CheckAndPut();
-                if((distance > 4) || i != cnt - 1){
+                if((distance > 4) || i != numberOfParts - 1){
                     MoveAndCount();
                     turnRight();
                     MoveAndCount();
@@ -296,7 +212,7 @@ public class Homework extends SuperKarel {
                 toggle = false;
                 turnRight();
                 CheckAndPut();
-                if(i != cnt - 1 || distance > 4){
+                if(i != numberOfParts - 1 || distance > 4){
                     MoveAndCount();
                     turnLeft();
                     MoveAndCount();
@@ -304,32 +220,44 @@ public class Homework extends SuperKarel {
             }
         }
     }
-    public void TopDown(){
+    public void LeftToRightOrTopToDown(int height){
         turnLeft();
         CheckAndPut();
         MoveAndCount();
-        CheckAndPut();
         turnRight();
-        if(frontIsBlocked()){
-            turnAround();
+        CheckAndPut();
+        if(!frontIsBlocked()){
+            MoveAndCount();
         }
         else{
-            MoveAndCount();
+            if(height == 1 || height == 2){
+                turnAround();
+            }
+            else{
+                turnRight();
+                MoveAndCount();
+                turnAround();
+            }
         }
     }
-    public void DownTop(){
+    public void RightToLeftOrDownToTop(int width){
         turnRight();
         CheckAndPut();
         MoveAndCount();
-        CheckAndPut();
         turnLeft();
-        if(frontIsBlocked()){
-            turnLeft();
+        CheckAndPut();
+        if(!frontIsBlocked()){
             MoveAndCount();
-            turnLeft();
         }
         else{
-            MoveAndCount();
+            if(width == 1 || width == 2){
+                turnAround();
+            }
+            else{
+                turnLeft();
+                MoveAndCount();
+                turnLeft();
+            }
         }
     }
     public void StraightForward(){
