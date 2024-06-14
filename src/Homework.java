@@ -3,7 +3,6 @@ public class Homework extends SuperKarel {
     private int cnt = 0;
     @Override
     public void run(){
-        setBeepersInBag(1000);
         int width = Distance();
         int height = Distance();
         if((height == 1 && (width == 1 || width == 2)) || (width == 1 && height == 2)){
@@ -79,8 +78,11 @@ public class Homework extends SuperKarel {
         return count;
     }
     public void CheckAndPut(){
-        if(noBeepersPresent())
+        if(noBeepersPresent()) {
+            if(noBeepersInBag())
+                setBeepersInBag(1000);
             putBeeper();
+        }
     }
     public void MoveAndCount(){
         move();
